@@ -25,3 +25,22 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //////////////////////////////////////////////////////////////////////////////
 
+#include "combined_robot_hw/combined_robot_hw.h"
+
+namespace combined_robot_hardware
+{
+  virtual bool prepareSwitch(const std::list<hardware_interface::ControllerInfo>& start_list,
+                             const std::list<hardware_interface::ControllerInfo>& stop_list)
+  {
+	  // TODO Call the prepareSwitch method of the single RobotHW objects.
+	  // Generate a filtered version of start_list and stop_list for each RobotHW before calling prepareSwitch
+	  return true;
+  };
+
+  virtual void doSwitch(const std::list<hardware_interface::ControllerInfo>& /*start_list*/,
+                        const std::list<hardware_interface::ControllerInfo>& /*stop_list*/)
+  {
+	  // TODO Call the doSwitch method of the single RobotHW objects.
+	  // Generate a filtered version of start_list and stop_list for each RobotHW before calling doSwitch
+  }
+}

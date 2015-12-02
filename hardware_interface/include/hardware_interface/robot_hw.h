@@ -61,6 +61,18 @@ public:
 
   }
 
+  /** \brief The init function is called to initialize the RobotHW from a
+   * non-realtime thread.
+   *
+   * \param root_nh A NodeHandle in the root of the caller namespace.
+   *
+   * \param robot_hw_nh A NodeHandle in the namespace from which the RobotHW
+   * should read its configuration.
+   *
+   * \returns True if initialization was successful
+   */
+  virtual bool init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh) {return true;};
+
   /** \name Resource Management
    *\{*/
 
