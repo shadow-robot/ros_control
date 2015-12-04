@@ -19,8 +19,10 @@ catkin_package(
 )
 
 add_library(${PROJECT_NAME}
-  src/robot_hw_1.cpp
-  src/robot_hw_2.cpp
+  src/my_robot_hw_1.cpp
+  src/my_robot_hw_2.cpp
+  src/my_robot_hw_3.cpp
+  src/my_robot_hw_4.cpp
 )
 add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES})
