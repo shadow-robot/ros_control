@@ -52,7 +52,7 @@ bool MyRobotHW4::init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh)
 
   registerInterface(&ft_sensor_interface_);
 
-  return True;
+  return true;
 }
 
 

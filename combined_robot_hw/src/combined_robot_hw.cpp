@@ -29,7 +29,14 @@
 
 namespace combined_robot_hardware
 {
-  virtual bool prepareSwitch(const std::list<hardware_interface::ControllerInfo>& start_list,
+  bool CombinedRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh)
+  {
+    std::vector<std::string> robots;
+    if (!robot_hw_nh.getParam("robot_hardware", robots)) {return false;}
+    return true;
+  }
+
+  bool CombinedRobotHW::prepareSwitch(const std::list<hardware_interface::ControllerInfo>& start_list,
                              const std::list<hardware_interface::ControllerInfo>& stop_list)
   {
 	  // TODO Call the prepareSwitch method of the single RobotHW objects.
@@ -37,7 +44,7 @@ namespace combined_robot_hardware
 	  return true;
   };
 
-  virtual void doSwitch(const std::list<hardware_interface::ControllerInfo>& /*start_list*/,
+  void CombinedRobotHW::doSwitch(const std::list<hardware_interface::ControllerInfo>& /*start_list*/,
                         const std::list<hardware_interface::ControllerInfo>& /*stop_list*/)
   {
 	  // TODO Call the doSwitch method of the single RobotHW objects.

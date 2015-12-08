@@ -69,7 +69,7 @@ bool MyRobotHW2::init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh)
   registerInterface(&ej_interface_);
   registerInterface(&vj_interface_);
 
-  return True;
+  return true;
 }
 
 

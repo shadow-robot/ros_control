@@ -36,6 +36,7 @@
 #include <hardware_interface/hardware_interface.h>
 #include <hardware_interface/controller_info.h>
 #include <ros/console.h>
+#include <ros/node_handle.h>
 
 namespace hardware_interface
 {
@@ -71,7 +72,7 @@ public:
    *
    * \returns True if initialization was successful
    */
-  virtual bool init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh) {return true;};
+  virtual bool init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh) {return true;}
 
   /** \name Resource Management
    *\{*/
