@@ -32,6 +32,7 @@
 
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/robot_hw.h>
+#include <pluginlib/class_list_macros.h>
 
 namespace combined_robot_hw_tests
 {

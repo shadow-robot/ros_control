@@ -40,7 +40,7 @@ bool MyRobotHW2::init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh)
   using namespace hardware_interface;
 
   std::vector<std::string> joints;
-  if (!robot_hw_nh.getParam("velocity_joints", joints)) {return false;}
+  if (!robot_hw_nh.getParam("joints", joints)) {return false;}
 
   // Initialize raw data
   size_t nb_joints = joints.size();
@@ -83,3 +83,5 @@ void MyRobotHW2::write()
 }
 
 }
+
+PLUGINLIB_EXPORT_CLASS( combined_robot_hw_tests::MyRobotHW2, hardware_interface::RobotHW)

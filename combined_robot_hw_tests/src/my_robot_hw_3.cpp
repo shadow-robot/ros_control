@@ -89,3 +89,6 @@ void MyRobotHW3::write()
 }
 
 }
+
+PLUGINLIB_EXPORT_CLASS( combined_robot_hw_tests::MyRobotHW3, hardware_interface::RobotHW)
+

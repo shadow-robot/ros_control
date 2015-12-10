@@ -45,11 +45,6 @@ TEST(CombinedRobotHWTests, constructionOk)
   }
 }
 
-//TEST(CombinedRobotHWTests, listControllerTypes)
-//{
-//
-//}
-
 
 int main(int argc, char** argv)
 {

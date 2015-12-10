@@ -35,6 +35,7 @@
 #include <hardware_interface/internal/interface_manager.h>
 #include <hardware_interface/hardware_interface.h>
 #include <hardware_interface/robot_hw.h>
+#include <pluginlib/class_loader.h>
 #include <ros/console.h>
 #include <ros/node_handle.h>
 
@@ -51,7 +52,7 @@ namespace combined_robot_hardware
 class CombinedRobotHW : public hardware_interface::RobotHW
 {
 public:
-  CombinedRobotHW(){}
+  CombinedRobotHW();
 
   virtual ~CombinedRobotHW(){}
 
@@ -82,6 +83,14 @@ public:
    */
   virtual void doSwitch(const std::list<hardware_interface::ControllerInfo>& /*start_list*/,
                         const std::list<hardware_interface::ControllerInfo>& /*stop_list*/);
+
+protected:
+  ros::NodeHandle root_nh_;
+  ros::NodeHandle robot_hw_nh_;
+  pluginlib::ClassLoader<hardware_interface::RobotHW> robot_hw_loader_;
+  std::vector<boost::shared_ptr<hardware_interface::RobotHW> > robot_hw_list_;
+
+  virtual bool loadRobotHW(const std::string& name);
 };
 
 }
