@@ -51,6 +51,7 @@ bool MyRobotHW4::init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh)
   ft_sensor_interface_.registerHandle(ForceTorqueSensorHandle(sensor_name_, frame_id_, force_, torque_));
 
   registerInterface(&ft_sensor_interface_);
+  registerInterface(&a_plain_hw_interface_);
 
   return true;
 }

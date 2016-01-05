@@ -91,6 +91,13 @@ protected:
   std::vector<boost::shared_ptr<hardware_interface::RobotHW> > robot_hw_list_;
 
   virtual bool loadRobotHW(const std::string& name);
+
+  /** \brief Filters the start and stop lists so that they only contain the controllers and
+   * resources that correspond to the r_hw hardware interface
+   */
+  void filterControllerList(const std::list<hardware_interface::ControllerInfo>& list,
+                            std::list<hardware_interface::ControllerInfo>& filtered_list,
+                            boost::shared_ptr<hardware_interface::RobotHW> r_hw);
 };
 
 }

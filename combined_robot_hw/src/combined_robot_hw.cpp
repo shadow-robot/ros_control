@@ -25,6 +25,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //////////////////////////////////////////////////////////////////////////////
 
+#include <algorithm>
 #include "combined_robot_hw/combined_robot_hw.h"
 
 namespace combined_robot_hardware
@@ -42,7 +43,7 @@ namespace combined_robot_hardware
     if (!robot_hw_nh.getParam("robot_hardware", robots)) {return false;}
 
     std::vector<std::string>::iterator it;
-    for(it = robots.begin(); it != robots.end(); it++)
+    for (it = robots.begin(); it != robots.end(); it++)
     {
       if (!loadRobotHW(*it))
       {
@@ -52,6 +53,51 @@ namespace combined_robot_hardware
     return true;
   }
 
+  void CombinedRobotHW::filterControllerList(const std::list<hardware_interface::ControllerInfo>& list,
+                                             std::list<hardware_interface::ControllerInfo>& filtered_list,
+                                             boost::shared_ptr<hardware_interface::RobotHW> r_hw)
+  {
+    filtered_list.clear();
+    for (std::list<hardware_interface::ControllerInfo>::const_iterator it = list.begin(); it != list.end(); ++it)
+    {
+      hardware_interface::ControllerInfo filtered_controller;
+      filtered_controller.name = it->name;
+      filtered_controller.type = it->type;
+
+      if (it->claimed_resources.empty())
+      {
+        filtered_list.push_back(filtered_controller);
+        continue;
+      }
+      for (std::vector<hardware_interface::InterfaceResources>::const_iterator res_it = it->claimed_resources.begin(); res_it != it->claimed_resources.end(); ++res_it)
+      {
+        hardware_interface::InterfaceResources filtered_iface_resources;
+        filtered_iface_resources.hardware_interface = res_it->hardware_interface;
+        std::vector<std::string> r_hw_ifaces = r_hw->getNames();
+
+        std::vector<std::string>::iterator if_name = std::find(r_hw_ifaces.begin(), r_hw_ifaces.end(), filtered_iface_resources.hardware_interface);
+        if (if_name == r_hw_ifaces.end()) // this hardware_interface is not registered in r_hw, so we filter it out
+        {
+          continue;
+        }
+
+        std::vector<std::string> r_hw_iface_resources = r_hw->getInterfaceResources(filtered_iface_resources.hardware_interface);
+        std::set<std::string> filtered_resources;
+        for (std::set<std::string>::const_iterator ctrl_res = res_it->resources.begin(); ctrl_res != res_it->resources.end(); ++ctrl_res)
+        {
+          std::vector<std::string>::iterator res_name = std::find(r_hw_iface_resources.begin(), r_hw_iface_resources.end(), *ctrl_res);
+          if (res_name != r_hw_iface_resources.end())
+          {
+            filtered_resources.insert(*ctrl_res);
+          }
+        }
+        filtered_iface_resources.resources = filtered_resources;
+        filtered_controller.claimed_resources.push_back(filtered_iface_resources);
+      }
+      filtered_list.push_back(filtered_controller);
+    }
+  }
+
   bool CombinedRobotHW::prepareSwitch(const std::list<hardware_interface::ControllerInfo>& start_list,
                              const std::list<hardware_interface::ControllerInfo>& stop_list)
   {
@@ -59,8 +105,14 @@ namespace combined_robot_hardware
     std::vector<boost::shared_ptr<hardware_interface::RobotHW> >::iterator robot_hw;
     for (robot_hw = robot_hw_list_.begin(); robot_hw != robot_hw_list_.end(); ++robot_hw)
     {
-      // TODO Generate a filtered version of start_list and stop_list for each RobotHW before calling prepareSwitch
-      if (!(*robot_hw)->prepareSwitch(start_list, stop_list))
+      std::list<hardware_interface::ControllerInfo> filtered_start_list;
+      std::list<hardware_interface::ControllerInfo> filtered_stop_list;
+
+      // Generate a filtered version of start_list and stop_list for each RobotHW before calling prepareSwitch
+      filterControllerList(start_list, filtered_start_list, *robot_hw);
+      filterControllerList(stop_list, filtered_stop_list, *robot_hw);
+
+      if (!(*robot_hw)->prepareSwitch(filtered_start_list, filtered_stop_list))
         return false;
     }
     return true;
@@ -73,8 +125,14 @@ namespace combined_robot_hardware
     std::vector<boost::shared_ptr<hardware_interface::RobotHW> >::iterator robot_hw;
     for (robot_hw = robot_hw_list_.begin(); robot_hw != robot_hw_list_.end(); ++robot_hw)
     {
-      // TODO Generate a filtered version of start_list and stop_list for each RobotHW before calling doSwitch
-      (*robot_hw)->doSwitch(start_list, stop_list);
+      std::list<hardware_interface::ControllerInfo> filtered_start_list;
+      std::list<hardware_interface::ControllerInfo> filtered_stop_list;
+
+      // Generate a filtered version of start_list and stop_list for each RobotHW before calling doSwitch
+      filterControllerList(start_list, filtered_start_list, *robot_hw);
+      filterControllerList(stop_list, filtered_stop_list, *robot_hw);
+
+      (*robot_hw)->doSwitch(filtered_start_list, filtered_stop_list);
     }
   }
 

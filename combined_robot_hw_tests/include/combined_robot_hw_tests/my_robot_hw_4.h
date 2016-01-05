@@ -50,6 +50,7 @@ protected:
 
 private:
   hardware_interface::ForceTorqueSensorInterface ft_sensor_interface_;
+  hardware_interface::HardwareInterface a_plain_hw_interface_;
 
   double force_[3];
   double torque_[3];
