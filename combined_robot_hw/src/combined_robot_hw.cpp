@@ -55,16 +55,27 @@ namespace combined_robot_hardware
   bool CombinedRobotHW::prepareSwitch(const std::list<hardware_interface::ControllerInfo>& start_list,
                              const std::list<hardware_interface::ControllerInfo>& stop_list)
   {
-	  // TODO Call the prepareSwitch method of the single RobotHW objects.
-	  // Generate a filtered version of start_list and stop_list for each RobotHW before calling prepareSwitch
-	  return true;
+    // Call the prepareSwitch method of the single RobotHW objects.
+    std::vector<boost::shared_ptr<hardware_interface::RobotHW> >::iterator robot_hw;
+    for (robot_hw = robot_hw_list_.begin(); robot_hw != robot_hw_list_.end(); ++robot_hw)
+    {
+      // TODO Generate a filtered version of start_list and stop_list for each RobotHW before calling prepareSwitch
+      if (!(*robot_hw)->prepareSwitch(start_list, stop_list))
+        return false;
+    }
+    return true;
   }
 
-  void CombinedRobotHW::doSwitch(const std::list<hardware_interface::ControllerInfo>& /*start_list*/,
-                        const std::list<hardware_interface::ControllerInfo>& /*stop_list*/)
+  void CombinedRobotHW::doSwitch(const std::list<hardware_interface::ControllerInfo>& start_list,
+                        const std::list<hardware_interface::ControllerInfo>& stop_list)
   {
-	  // TODO Call the doSwitch method of the single RobotHW objects.
-	  // Generate a filtered version of start_list and stop_list for each RobotHW before calling doSwitch
+    // Call the doSwitch method of the single RobotHW objects.
+    std::vector<boost::shared_ptr<hardware_interface::RobotHW> >::iterator robot_hw;
+    for (robot_hw = robot_hw_list_.begin(); robot_hw != robot_hw_list_.end(); ++robot_hw)
+    {
+      // TODO Generate a filtered version of start_list and stop_list for each RobotHW before calling doSwitch
+      (*robot_hw)->doSwitch(start_list, stop_list);
+    }
   }
 
   bool CombinedRobotHW::loadRobotHW(const std::string& name)

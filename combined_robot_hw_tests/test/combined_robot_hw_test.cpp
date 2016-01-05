@@ -30,6 +30,7 @@
 
 #include <combined_robot_hw/combined_robot_hw.h>
 #include <controller_manager/controller_manager.h>
+#include <hardware_interface/joint_command_interface.h>
 
 using combined_robot_hardware::CombinedRobotHW;
 
@@ -42,6 +43,25 @@ TEST(CombinedRobotHWTests, constructionOk)
     CombinedRobotHW robot_hw;
     bool init_success = robot_hw.init(nh, nh);
     ASSERT_TRUE(init_success);
+  }
+}
+
+TEST(CombinedRobotHWTests, combinationOk)
+{
+  ros::NodeHandle nh;
+
+  //
+  {
+    CombinedRobotHW robot_hw;
+    bool init_success = robot_hw.init(nh, nh);
+    ASSERT_TRUE(init_success);
+
+    hardware_interface::JointStateInterface*    js_interface = robot_hw.get<hardware_interface::JointStateInterface>();
+    hardware_interface::EffortJointInterface*   ej_interface = robot_hw.get<hardware_interface::EffortJointInterface>();
+    hardware_interface::VelocityJointInterface* vj_interface = robot_hw.get<hardware_interface::VelocityJointInterface>();
+    hardware_interface::PositionJointInterface* pj_interface = robot_hw.get<hardware_interface::PositionJointInterface>();
+
+    ej_interface->getHandle("test_joint1");
   }
 }
 
