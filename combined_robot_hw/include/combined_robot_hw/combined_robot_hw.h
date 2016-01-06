@@ -84,6 +84,16 @@ public:
   virtual void doSwitch(const std::list<hardware_interface::ControllerInfo>& start_list,
                         const std::list<hardware_interface::ControllerInfo>& stop_list);
 
+  /**
+   * Reads data from the robot HW
+   */
+  virtual void read();
+
+  /**
+   * Writes data to the robot HW
+   */
+  virtual void write();
+
 protected:
   ros::NodeHandle root_nh_;
   ros::NodeHandle robot_hw_nh_;
@@ -93,7 +103,7 @@ protected:
   virtual bool loadRobotHW(const std::string& name);
 
   /** \brief Filters the start and stop lists so that they only contain the controllers and
-   * resources that correspond to the r_hw hardware interface
+   * resources that correspond to the r_hw interface manager
    */
   void filterControllerList(const std::list<hardware_interface::ControllerInfo>& list,
                             std::list<hardware_interface::ControllerInfo>& filtered_list,

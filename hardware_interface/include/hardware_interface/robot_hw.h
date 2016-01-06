@@ -141,6 +141,16 @@ public:
    */
   virtual void doSwitch(const std::list<ControllerInfo>& /*start_list*/,
                         const std::list<ControllerInfo>& /*stop_list*/) {}
+
+  /**
+   * Reads data from the robot HW
+   */
+  virtual void read() {}
+
+  /**
+   * Writes data to the robot HW
+   */
+  virtual void write() {}
 };
 
 }
