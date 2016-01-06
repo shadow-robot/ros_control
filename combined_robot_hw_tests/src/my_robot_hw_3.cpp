@@ -63,7 +63,7 @@ bool MyRobotHW3::init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh)
     joint_position_[i] = 1.0;
     joint_velocity_[i] = 0.0;
     joint_effort_[i] = 0.1;
-    joint_effort_command_[i] = 0.0;
+    joint_effort_command_[i] = 1.5;
     joint_velocity_command_[i] = 0.0;
     // Populate hardware interfaces
     js_interface_.registerHandle(JointStateHandle(joint_name_[i], &joint_position_[i], &joint_velocity_[i], &joint_effort_[i]));

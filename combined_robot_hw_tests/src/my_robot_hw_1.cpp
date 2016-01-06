@@ -51,7 +51,7 @@ bool MyRobotHW1::init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh)
   joint_position_[0] = 1.0;
   joint_velocity_[0] = 0.0;
   joint_effort_[0] = 0.1;
-  joint_effort_command_[0] = 0.0;
+  joint_effort_command_[0] = 3.0;
   joint_velocity_command_[0] = 0.0;
 
   joint_name_[1] = "test_joint2";
