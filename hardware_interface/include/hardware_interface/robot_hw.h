@@ -62,6 +62,11 @@ public:
 
   }
 
+  virtual ~RobotHW()
+  {
+
+  }
+
   /** \brief The init function is called to initialize the RobotHW from a
    * non-realtime thread.
    *
