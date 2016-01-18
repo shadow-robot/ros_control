@@ -21,4 +21,6 @@
   </rosparam>
 
   <test test-name="combined_robot_hw_tests" pkg="combined_robot_hw_tests" type="combined_robot_hw_test"/>
+<!--  <node name="combined_robot_hw_tests" pkg="combined_robot_hw_tests" type="combined_robot_hw_test"/>-->
+  
 </launch>

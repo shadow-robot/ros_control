@@ -45,6 +45,10 @@ public:
   virtual bool init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh);
   void read();
   void write();
+  virtual bool prepareSwitch(const std::list<hardware_interface::ControllerInfo>& start_list,
+                             const std::list<hardware_interface::ControllerInfo>& stop_list);
+  virtual void doSwitch(const std::list<hardware_interface::ControllerInfo>& start_list,
+                        const std::list<hardware_interface::ControllerInfo>& stop_list);
 
 protected:
 

@@ -95,6 +95,107 @@ TEST(CombinedRobotHWTests, combinationOk)
   ASSERT_FLOAT_EQ(3.5, ej_handle.getCommand());
 }
 
+TEST(CombinedRobotHWTests, switchOk)
+{
+  ros::NodeHandle nh;
+
+  CombinedRobotHW robot_hw;
+  bool init_success = robot_hw.init(nh, nh);
+  ASSERT_TRUE(init_success);
+
+  hardware_interface::JointStateInterface*            js_interface = robot_hw.get<hardware_interface::JointStateInterface>();
+  hardware_interface::EffortJointInterface*           ej_interface = robot_hw.get<hardware_interface::EffortJointInterface>();
+  hardware_interface::VelocityJointInterface*         vj_interface = robot_hw.get<hardware_interface::VelocityJointInterface>();
+  hardware_interface::ForceTorqueSensorInterface*     ft_interface = robot_hw.get<hardware_interface::ForceTorqueSensorInterface>();
+  hardware_interface::HardwareInterface*              plain_hw_interface = robot_hw.get<hardware_interface::HardwareInterface>();
+  hardware_interface::PositionJointInterface*         pj_interface = robot_hw.get<hardware_interface::PositionJointInterface>();
+
+  ASSERT_TRUE(js_interface != NULL);
+  ASSERT_TRUE(ej_interface != NULL);
+  ASSERT_TRUE(vj_interface != NULL);
+  ASSERT_TRUE(ft_interface != NULL);
+  ASSERT_TRUE(plain_hw_interface != NULL);
+
+  // Test that no PositionJointInterface was found
+  ASSERT_EQ(NULL, pj_interface);
+
+  // Test some handles from my_robot_hw_1
+  hardware_interface::JointStateHandle js_handle = js_interface->getHandle("test_joint1");
+  hardware_interface::JointHandle ej_handle = ej_interface->getHandle("test_joint1");
+  hardware_interface::JointHandle vj_handle = vj_interface->getHandle("test_joint1");
+  ASSERT_FLOAT_EQ(1.0, js_handle.getPosition());
+  ASSERT_FLOAT_EQ(0.0, ej_handle.getVelocity());
+  ASSERT_FLOAT_EQ(3.0, ej_handle.getCommand());
+
+  // Test some handles from my_robot_hw_3
+  js_handle = js_interface->getHandle("right_arm_joint_1");
+  ej_handle = ej_interface->getHandle("right_arm_joint_1");
+  vj_handle = vj_interface->getHandle("right_arm_joint_1");
+  ASSERT_FLOAT_EQ(1.0, js_handle.getPosition());
+  ASSERT_FLOAT_EQ(0.0, ej_handle.getVelocity());
+  ASSERT_FLOAT_EQ(1.5, ej_handle.getCommand());
+
+  // Test some handles from my_robot_hw_4
+  hardware_interface::ForceTorqueSensorHandle ft_handle = ft_interface->getHandle("ft_sensor_1");
+  ASSERT_FLOAT_EQ(0.2, ft_handle.getForce()[2]);
+
+  // Test empty list (it is expected to work)
+  {
+    std::list<hardware_interface::ControllerInfo> start_list;
+    std::list<hardware_interface::ControllerInfo> stop_list;
+    ASSERT_TRUE(robot_hw.prepareSwitch(start_list, stop_list));
+    ASSERT_NO_THROW(robot_hw.doSwitch(start_list, stop_list));
+  }
+
+  // Test failure
+  {
+    std::list<hardware_interface::ControllerInfo> start_list;
+    std::list<hardware_interface::ControllerInfo> stop_list;
+    hardware_interface::ControllerInfo controller_1;
+    controller_1.name = "ctrl_1";
+    controller_1.type = "some_type";
+    hardware_interface::InterfaceResources iface_res_1;
+    iface_res_1.hardware_interface = "hardware_interface::ForceTorqueSensorInterface";
+    iface_res_1.resources.insert("ft_sensor_1");
+    controller_1.claimed_resources.push_back(iface_res_1);
+    start_list.push_back(controller_1);
+    ASSERT_FALSE(robot_hw.prepareSwitch(start_list, stop_list));
+    ASSERT_ANY_THROW(robot_hw.doSwitch(start_list, stop_list));
+  }
+
+  // Test existing interfaces and resources
+  {
+    std::list<hardware_interface::ControllerInfo> start_list;
+    std::list<hardware_interface::ControllerInfo> stop_list;
+    hardware_interface::ControllerInfo controller_1;
+    controller_1.name = "ctrl_1";
+    controller_1.type = "some_type";
+    hardware_interface::InterfaceResources iface_res_1;
+    iface_res_1.hardware_interface = "hardware_interface::EffortJointInterface";
+    iface_res_1.resources.insert("test_joint1");
+    iface_res_1.resources.insert("test_joint2");
+    iface_res_1.resources.insert("test_joint3");
+    iface_res_1.resources.insert("test_joint4");
+    controller_1.claimed_resources.push_back(iface_res_1);
+    hardware_interface::InterfaceResources iface_res_2;
+    iface_res_2.hardware_interface = "hardware_interface::VelocityJointInterface";
+    iface_res_2.resources.insert("test_joint1");
+    iface_res_2.resources.insert("test_joint4");
+    controller_1.claimed_resources.push_back(iface_res_1);
+    start_list.push_back(controller_1);
+
+    hardware_interface::ControllerInfo controller_2;
+    hardware_interface::InterfaceResources iface_res_3;
+    iface_res_3.hardware_interface = "hardware_interface::VelocityJointInterface";
+    iface_res_3.resources.insert("test_joint3");
+    iface_res_3.resources.insert("test_joint5");
+    controller_2.claimed_resources.push_back(iface_res_3);
+    start_list.push_back(controller_2);
+    ASSERT_TRUE(robot_hw.prepareSwitch(start_list, stop_list));
+    ASSERT_NO_THROW(robot_hw.doSwitch(start_list, stop_list));
+  }
+
+}
 
 int main(int argc, char** argv)
 {

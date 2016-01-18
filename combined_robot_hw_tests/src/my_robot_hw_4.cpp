@@ -66,6 +66,27 @@ void MyRobotHW4::write()
 {
 }
 
+bool MyRobotHW4::prepareSwitch(const std::list<hardware_interface::ControllerInfo>& start_list,
+                               const std::list<hardware_interface::ControllerInfo>& stop_list)
+{
+  // To easily test a failure case
+  if (!start_list.empty() || !stop_list.empty())
+  {
+    return false;
+  }
+  return true;
+}
+
+void MyRobotHW4::doSwitch(const std::list<hardware_interface::ControllerInfo>& start_list,
+                          const std::list<hardware_interface::ControllerInfo>& stop_list)
+{
+  // To easily test a failure case
+  if (!start_list.empty() || !stop_list.empty())
+  {
+    throw hardware_interface::HardwareInterfaceException("Can't switch controllers");
+  }
+}
+
 }
 
 PLUGINLIB_EXPORT_CLASS( combined_robot_hw_tests::MyRobotHW4, hardware_interface::RobotHW)

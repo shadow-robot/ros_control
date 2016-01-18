@@ -26,6 +26,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 
+#include <algorithm>
 #include <combined_robot_hw_tests/my_robot_hw_2.h>
 
 namespace combined_robot_hw_tests
@@ -80,6 +81,73 @@ void MyRobotHW2::read()
 
 void MyRobotHW2::write()
 {
+}
+
+bool MyRobotHW2::prepareSwitch(const std::list<hardware_interface::ControllerInfo>& start_list,
+                               const std::list<hardware_interface::ControllerInfo>& stop_list)
+{
+  for (std::list<hardware_interface::ControllerInfo>::const_iterator it = start_list.begin(); it != start_list.end(); ++it)
+  {
+    if (it->claimed_resources.empty())
+    {
+      continue;
+    }
+    for (std::vector<hardware_interface::InterfaceResources>::const_iterator res_it = it->claimed_resources.begin(); res_it != it->claimed_resources.end(); ++res_it)
+    {
+      std::vector<std::string> r_hw_ifaces = this->getNames();
+
+      std::vector<std::string>::iterator if_name = std::find(r_hw_ifaces.begin(), r_hw_ifaces.end(), res_it->hardware_interface);
+      if (if_name == r_hw_ifaces.end()) // this hardware_interface is not registered on this RobotHW
+      {
+        ROS_ERROR_STREAM("Bad interface: " << res_it->hardware_interface);
+        return false;
+      }
+
+      std::vector<std::string> r_hw_iface_resources = this->getInterfaceResources(res_it->hardware_interface);
+      for (std::set<std::string>::const_iterator ctrl_res = res_it->resources.begin(); ctrl_res != res_it->resources.end(); ++ctrl_res)
+      {
+        std::vector<std::string>::iterator res_name = std::find(r_hw_iface_resources.begin(), r_hw_iface_resources.end(), *ctrl_res);
+        if (res_name == r_hw_iface_resources.end()) // this resource is not registered on this RobotHW
+        {
+          ROS_ERROR_STREAM("Bad resource: " << (*ctrl_res));
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
+void MyRobotHW2::doSwitch(const std::list<hardware_interface::ControllerInfo>& start_list,
+                          const std::list<hardware_interface::ControllerInfo>& stop_list)
+{
+  for (std::list<hardware_interface::ControllerInfo>::const_iterator it = start_list.begin(); it != start_list.end(); ++it)
+  {
+    if (it->claimed_resources.empty())
+    {
+      continue;
+    }
+    for (std::vector<hardware_interface::InterfaceResources>::const_iterator res_it = it->claimed_resources.begin(); res_it != it->claimed_resources.end(); ++res_it)
+    {
+      std::vector<std::string> r_hw_ifaces = this->getNames();
+
+      std::vector<std::string>::iterator if_name = std::find(r_hw_ifaces.begin(), r_hw_ifaces.end(), res_it->hardware_interface);
+      if (if_name == r_hw_ifaces.end()) // this hardware_interface is not registered on this RobotHW
+      {
+        throw hardware_interface::HardwareInterfaceException("Hardware_interface " + res_it->hardware_interface + " is not registered");
+      }
+
+      std::vector<std::string> r_hw_iface_resources = this->getInterfaceResources(res_it->hardware_interface);
+      for (std::set<std::string>::const_iterator ctrl_res = res_it->resources.begin(); ctrl_res != res_it->resources.end(); ++ctrl_res)
+      {
+        std::vector<std::string>::iterator res_name = std::find(r_hw_iface_resources.begin(), r_hw_iface_resources.end(), *ctrl_res);
+        if (res_name == r_hw_iface_resources.end()) // this resource is not registered on this RobotHW
+        {
+          throw hardware_interface::HardwareInterfaceException("Resource " + *ctrl_res + " is not registered");
+        }
+      }
+    }
+  }
 }
 
 }
