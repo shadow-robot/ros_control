@@ -59,7 +59,7 @@ bool MyRobotHW4::init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh)
 
 void MyRobotHW4::read()
 {
-
+  force_[2] = 1.2;
 }
 
 void MyRobotHW4::write()

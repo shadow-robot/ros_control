@@ -35,16 +35,6 @@
 
 using combined_robot_hardware::CombinedRobotHW;
 
-TEST(CombinedRobotHWTests, constructionOk)
-{
-  ros::NodeHandle nh;
-
-  CombinedRobotHW robot_hw;
-  bool init_success = robot_hw.init(nh, nh);
-  ASSERT_TRUE(init_success);
-
-}
-
 TEST(CombinedRobotHWTests, combinationOk)
 {
   ros::NodeHandle nh;
@@ -69,8 +59,6 @@ TEST(CombinedRobotHWTests, combinationOk)
   // Test that no PositionJointInterface was found
   ASSERT_EQ(NULL, pj_interface);
 
-
-
   // Test some handles from my_robot_hw_1
   hardware_interface::JointStateHandle js_handle = js_interface->getHandle("test_joint1");
   hardware_interface::JointHandle ej_handle = ej_interface->getHandle("test_joint1");
@@ -87,16 +75,24 @@ TEST(CombinedRobotHWTests, combinationOk)
   ASSERT_FLOAT_EQ(0.0, ej_handle.getVelocity());
   ASSERT_FLOAT_EQ(1.5, ej_handle.getCommand());
 
-  // Test some handles from my_robot_hw_3
+  // Test some handles from my_robot_hw_4
   hardware_interface::ForceTorqueSensorHandle ft_handle = ft_interface->getHandle("ft_sensor_1");
   ASSERT_FLOAT_EQ(0.2, ft_handle.getForce()[2]);
 
   // Test non-existent handle throws exception
-  ASSERT_ANY_THROW(ej_interface->getHandle("test_joint8"));
+  ASSERT_ANY_THROW(ej_interface->getHandle("non_existent_joint"));
 
   // Test read and write functions
   robot_hw.read();
+  js_handle = js_interface->getHandle("test_joint1");
+  ASSERT_FLOAT_EQ(2.7, js_handle.getPosition());
+  ASSERT_FLOAT_EQ(1.2, ft_handle.getForce()[2]);
+
+  ej_handle = ej_interface->getHandle("test_joint1");
+  ej_handle.setCommand(3.5);
   robot_hw.write();
+  ej_handle = ej_interface->getHandle("test_joint2");
+  ASSERT_FLOAT_EQ(3.5, ej_handle.getCommand());
 }
 
 

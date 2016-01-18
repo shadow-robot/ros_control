@@ -91,11 +91,13 @@ bool MyRobotHW1::init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh)
 
 void MyRobotHW1::read()
 {
-
+  joint_position_[0] = 2.7;
 }
 
 void MyRobotHW1::write()
 {
+  // Just to test that write() is called
+  joint_effort_command_[1] = joint_effort_command_[0];
 }
 
 }
