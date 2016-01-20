@@ -3,6 +3,8 @@ project(combined_robot_hw_tests)
 
 find_package(catkin REQUIRED COMPONENTS
   combined_robot_hw
+  controller_manager
+  controller_manager_tests
   hardware_interface
   roscpp
 )
@@ -27,6 +29,8 @@ add_library(${PROJECT_NAME}
 add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
+add_executable(combined_robot_hw_dummy_app src/dummy_app.cpp)
+target_link_libraries(combined_robot_hw_dummy_app ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 if(CATKIN_ENABLE_TESTING)
 
@@ -36,6 +40,12 @@ if(CATKIN_ENABLE_TESTING)
     test/combined_robot_hw_test.cpp
   )
   target_link_libraries(combined_robot_hw_test ${PROJECT_NAME} ${catkin_LIBRARIES})
+  
+  add_rostest_gtest(combined_robot_hw_cm_test
+    test/cm_test.test
+    test/cm_test.cpp
+  )
+  target_link_libraries(combined_robot_hw_cm_test ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 endif()
 
