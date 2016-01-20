@@ -103,42 +103,6 @@ TEST(CombinedRobotHWTests, switchOk)
   bool init_success = robot_hw.init(nh, nh);
   ASSERT_TRUE(init_success);
 
-  hardware_interface::JointStateInterface*            js_interface = robot_hw.get<hardware_interface::JointStateInterface>();
-  hardware_interface::EffortJointInterface*           ej_interface = robot_hw.get<hardware_interface::EffortJointInterface>();
-  hardware_interface::VelocityJointInterface*         vj_interface = robot_hw.get<hardware_interface::VelocityJointInterface>();
-  hardware_interface::ForceTorqueSensorInterface*     ft_interface = robot_hw.get<hardware_interface::ForceTorqueSensorInterface>();
-  hardware_interface::HardwareInterface*              plain_hw_interface = robot_hw.get<hardware_interface::HardwareInterface>();
-  hardware_interface::PositionJointInterface*         pj_interface = robot_hw.get<hardware_interface::PositionJointInterface>();
-
-  ASSERT_TRUE(js_interface != NULL);
-  ASSERT_TRUE(ej_interface != NULL);
-  ASSERT_TRUE(vj_interface != NULL);
-  ASSERT_TRUE(ft_interface != NULL);
-  ASSERT_TRUE(plain_hw_interface != NULL);
-
-  // Test that no PositionJointInterface was found
-  ASSERT_EQ(NULL, pj_interface);
-
-  // Test some handles from my_robot_hw_1
-  hardware_interface::JointStateHandle js_handle = js_interface->getHandle("test_joint1");
-  hardware_interface::JointHandle ej_handle = ej_interface->getHandle("test_joint1");
-  hardware_interface::JointHandle vj_handle = vj_interface->getHandle("test_joint1");
-  ASSERT_FLOAT_EQ(1.0, js_handle.getPosition());
-  ASSERT_FLOAT_EQ(0.0, ej_handle.getVelocity());
-  ASSERT_FLOAT_EQ(3.0, ej_handle.getCommand());
-
-  // Test some handles from my_robot_hw_3
-  js_handle = js_interface->getHandle("right_arm_joint_1");
-  ej_handle = ej_interface->getHandle("right_arm_joint_1");
-  vj_handle = vj_interface->getHandle("right_arm_joint_1");
-  ASSERT_FLOAT_EQ(1.0, js_handle.getPosition());
-  ASSERT_FLOAT_EQ(0.0, ej_handle.getVelocity());
-  ASSERT_FLOAT_EQ(1.5, ej_handle.getCommand());
-
-  // Test some handles from my_robot_hw_4
-  hardware_interface::ForceTorqueSensorHandle ft_handle = ft_interface->getHandle("ft_sensor_1");
-  ASSERT_FLOAT_EQ(0.2, ft_handle.getForce()[2]);
-
   // Test empty list (it is expected to work)
   {
     std::list<hardware_interface::ControllerInfo> start_list;

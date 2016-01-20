@@ -69,10 +69,20 @@ void MyRobotHW4::write()
 bool MyRobotHW4::prepareSwitch(const std::list<hardware_interface::ControllerInfo>& start_list,
                                const std::list<hardware_interface::ControllerInfo>& stop_list)
 {
-  // To easily test a failure case
+  // To easily test a failure case, any controller that claims resources on MyRobotHW4 will fail
   if (!start_list.empty() || !stop_list.empty())
   {
-    return false;
+    for (std::list<hardware_interface::ControllerInfo>::const_iterator it = start_list.begin(); it != start_list.end(); ++it)
+    {
+      if (it->claimed_resources.empty())
+      {
+        continue;
+      }
+      else
+      {
+        return false;
+      }
+    }
   }
   return true;
 }
@@ -80,10 +90,20 @@ bool MyRobotHW4::prepareSwitch(const std::list<hardware_interface::ControllerInf
 void MyRobotHW4::doSwitch(const std::list<hardware_interface::ControllerInfo>& start_list,
                           const std::list<hardware_interface::ControllerInfo>& stop_list)
 {
-  // To easily test a failure case
+  // To easily test a failure case, any controller that claims resources on MyRobotHW4 will fail
   if (!start_list.empty() || !stop_list.empty())
   {
-    throw hardware_interface::HardwareInterfaceException("Can't switch controllers");
+    for (std::list<hardware_interface::ControllerInfo>::const_iterator it = start_list.begin(); it != start_list.end(); ++it)
+    {
+      if (it->claimed_resources.empty())
+      {
+        continue;
+      }
+      else
+      {
+        throw hardware_interface::HardwareInterfaceException("MyRobotHW4 can't switch controllers");
+      }
+    }
   }
 }
 
