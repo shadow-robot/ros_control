@@ -159,6 +159,39 @@ TEST(CombinedRobotHWTests, switchOk)
     ASSERT_NO_THROW(robot_hw.doSwitch(start_list, stop_list));
   }
 
+  // Test non-registered interfaces and resources
+  // (this should also work, as CombinedRobotHW will filter out the non-registered ones)
+  {
+    std::list<hardware_interface::ControllerInfo> start_list;
+    std::list<hardware_interface::ControllerInfo> stop_list;
+    hardware_interface::ControllerInfo controller_1;
+    controller_1.name = "ctrl_1";
+    controller_1.type = "some_type";
+    hardware_interface::InterfaceResources iface_res_1;
+    iface_res_1.hardware_interface = "hardware_interface::NonRegisteredInterface";
+    iface_res_1.resources.insert("test_joint1");
+    iface_res_1.resources.insert("test_joint2");
+    iface_res_1.resources.insert("test_joint3");
+    iface_res_1.resources.insert("test_joint4");
+    controller_1.claimed_resources.push_back(iface_res_1);
+    hardware_interface::InterfaceResources iface_res_2;
+    iface_res_2.hardware_interface = "hardware_interface::VelocityJointInterface";
+    iface_res_2.resources.insert("test_joint1");
+    iface_res_2.resources.insert("non_registered_joint1");
+    controller_1.claimed_resources.push_back(iface_res_1);
+    start_list.push_back(controller_1);
+
+    hardware_interface::ControllerInfo controller_2;
+    hardware_interface::InterfaceResources iface_res_3;
+    iface_res_3.hardware_interface = "hardware_interface::VelocityJointInterface";
+    iface_res_3.resources.insert("test_joint3");
+    iface_res_3.resources.insert("non_registered_joint2");
+    controller_2.claimed_resources.push_back(iface_res_3);
+    start_list.push_back(controller_2);
+    ASSERT_TRUE(robot_hw.prepareSwitch(start_list, stop_list));
+    ASSERT_NO_THROW(robot_hw.doSwitch(start_list, stop_list));
+  }
+
 }
 
 int main(int argc, char** argv)
