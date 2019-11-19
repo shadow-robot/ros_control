@@ -37,6 +37,30 @@
 namespace hardware_interface
 {
 
+typedef enum ActuatorCommandMode
+{
+  PWM = 0,
+  EFFORT = 1
+}
+ActuatorCommandMode;
+
+inline std::string command_type_to_string(ActuatorCommandMode mode)
+{
+  std::string command_type_string = "";
+  switch(mode)
+  {
+  case PWM:
+    command_type_string = "pwm";
+    break;
+  case EFFORT:
+    command_type_string = "effort";
+    break;
+  }
+
+  return command_type_string;
+}
+
+
 /** A handle used to read the state of a single actuator. */
 class ActuatorStateHandle
 {

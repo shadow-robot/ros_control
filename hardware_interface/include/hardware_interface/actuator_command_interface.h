@@ -40,14 +40,14 @@ namespace hardware_interface
 class ActuatorHandle : public ActuatorStateHandle
 {
 public:
-  ActuatorHandle() : ActuatorStateHandle(), cmd_(0) {}
+  ActuatorHandle() : ActuatorStateHandle(), cmd_(0), cmd_type_(0) {}
 
   /**
    * \param as This actuator's state handle
    * \param cmd A pointer to the storage for this actuator's output command
    */
-  ActuatorHandle(const ActuatorStateHandle& as, double* cmd)
-    : ActuatorStateHandle(as), cmd_(cmd)
+  ActuatorHandle(const ActuatorStateHandle& as, double* cmd, ActuatorCommandMode* cmd_type)
+    : ActuatorStateHandle(as), cmd_(cmd), cmd_type_(cmd_type)
   {
     if (!cmd_)
     {
@@ -55,6 +55,7 @@ public:
     }
   }
 
+  void setCommand(double command, ActuatorCommandMode command_type) {assert(cmd_); *cmd_ = command; *cmd_type_ = command_type;}
   void setCommand(double command) {assert(cmd_); *cmd_ = command;}
   double getCommand() const {assert(cmd_); return *cmd_;}
 
@@ -62,6 +63,7 @@ public:
 
 private:
   double* cmd_;
+  ActuatorCommandMode* cmd_type_;
 };
 
 /** \brief Hardware interface to support commanding an array of actuators.
