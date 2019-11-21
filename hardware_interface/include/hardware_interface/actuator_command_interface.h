@@ -46,7 +46,7 @@ public:
    * \param as This actuator's state handle
    * \param cmd A pointer to the storage for this actuator's output command
    */
-  ActuatorHandle(const ActuatorStateHandle& as, double* cmd, ActuatorCommandMode* cmd_type)
+  ActuatorHandle(const ActuatorStateHandle& as, double* cmd, ActuatorCommandMode* cmd_type = 0)
     : ActuatorStateHandle(as), cmd_(cmd), cmd_type_(cmd_type)
   {
     if (!cmd_)
