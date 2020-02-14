@@ -75,7 +75,7 @@ def parse_args(args=None):
     parser = argparse.ArgumentParser(description='Controller spawner')
     parser.add_argument('--stopped', action='store_true',
                         help='loads controllers, but does not start them')
-    parser.add_argument('--wait-for', metavar='topic', help='does not load or '
+    parser.add_argument('--wait-for', metavar='topic', nargs='+', help='does not load or '
                         'start controllers until it hears "True" on a topic (Bool)')
     parser.add_argument('--namespace', metavar='ns',
                         help='namespace of the controller_manager services')
@@ -92,12 +92,16 @@ def main():
 
     args = parse_args(rospy.myargv()[1:])
 
-    wait_for_topic = args.wait_for
+    wait_for_topics = args.wait_for
     autostart = 1 if not args.stopped else 0
     robot_namespace = args.namespace or ""
     timeout = args.timeout
 
     rospy.init_node('spawner', anonymous=True)
+    print args
+    my_list = [str(item) for item in wait_for_topic[0].split(',')]
+    for fotis in my_list:
+        print fotis
 
     if args.shutdown_timeout is not None:
       rospy.logwarn("DEPRECATION warning: --shutdown-timeout has no effect.")
@@ -133,7 +137,7 @@ def main():
         rospy.logwarn("Controller Spawner couldn't find the expected controller_manager ROS interface.")
         return
 
-    if wait_for_topic:
+    if wait_for_topics:
         # This has to be a list since Python has a peculiar mechanism to determine
         # whether a variable is local to a function or not:
         # if the variable is assigned in the body of the function, then it is
@@ -143,7 +147,7 @@ def main():
 
         def wait_for_topic_cb(msg):
             wait_for_topic_result[0] = msg
-            rospy.logdebug("Heard from wait-for topic: %s" % str(msg.data))
+            rospy.logdebug("Heard from wait-for %s topic: %s" % str(msg.data))
         rospy.Subscriber(wait_for_topic, Bool, wait_for_topic_cb)
         started_waiting = time.time()
 
