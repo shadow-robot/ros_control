@@ -91,7 +91,7 @@ namespace combined_robot_hw
 
   bool CombinedRobotHW::loadRobotHW(const std::string& name)
   {
-    ROS_DEBUG("Will load robot HW '%s'", name.c_str());
+    ROS_INFO("Will load robot HW '%s'", name.c_str());
 
     ros::NodeHandle c_nh;
     // Constructs the robot HW
@@ -114,7 +114,7 @@ namespace combined_robot_hw
     std::string type;
     if (c_nh.getParam("type", type))
     {
-      ROS_DEBUG("Constructing robot HW '%s' of type '%s'", name.c_str(), type.c_str());
+      ROS_INFO("Constructing robot HW '%s' of type '%s'", name.c_str(), type.c_str());
       try
       {
         for (const auto& cur_type : robot_hw_loader_.getDeclaredClasses())
@@ -144,7 +144,7 @@ namespace combined_robot_hw
     }
 
     // Initializes the robot HW
-    ROS_DEBUG("Initializing robot HW '%s'", name.c_str());
+    ROS_INFO("Initializing robot HW '%s'", name.c_str());
     bool initialized;
     try
     {
@@ -166,13 +166,13 @@ namespace combined_robot_hw
       ROS_ERROR("Initializing robot HW '%s' failed", name.c_str());
       return false;
     }
-    ROS_DEBUG("Initialized robot HW '%s' successful", name.c_str());
+    ROS_INFO("Initialized robot HW '%s' successful", name.c_str());
 
     robot_hw_list_.push_back(robot_hw);
 
     this->registerInterfaceManager(robot_hw.get());
 
-    ROS_DEBUG("Successfully load robot HW '%s'", name.c_str());
+    ROS_INFO("Successfully load robot HW '%s'", name.c_str());
     return true;
   }
 
