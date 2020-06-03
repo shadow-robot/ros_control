@@ -169,6 +169,7 @@ def main():
     # find yaml files to load
     controllers = []
     for name in args.controllers:
+        rospy.logwarn("CONTROLLERS: ", name)
         if os.path.exists(name):
             # load yaml file onto the parameter server, using the namespace specified in the yaml file
             rosparam.set_param("",open(name))
@@ -181,9 +182,11 @@ def main():
 
     # load controllers
     for name in controllers:
+        rospy.logwarn("SPAWNER LOADING CONTROLLER: "+name)
         rospy.loginfo("Loading controller: "+name)
         resp = load_controller(name)
         if resp.ok != 0:
+            rospy.logwarn("LOADED CONTROLLER: "+name)
             loaded.append(name)
         else:
             time.sleep(1) # give error message a chance to get out
@@ -196,8 +199,12 @@ def main():
 
     # start controllers is requested
     if autostart:
+        rospy.logwarn("STARTING CONTROLLER: "+loaded)
+
         resp = switch_controller(loaded, [], 2, False, 0.0)
+        rospy.logwarn("STARTING CONTROLLER: "+loaded)
         if resp.ok != 0:
+            rospy.logwarn("STARTING CONTROLLER: "+name)
             rospy.loginfo("Started controllers: %s" % ', '.join(loaded))
         else:
             rospy.logerr("Failed to start controllers: %s" % ', '.join(loaded))
