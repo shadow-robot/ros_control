@@ -27,6 +27,8 @@
 
 #include <algorithm>
 #include "combined_robot_hw/combined_robot_hw.h"
+#include <chrono>
+
 
 namespace combined_robot_hw
 {
@@ -45,10 +47,16 @@ namespace combined_robot_hw
 
     for (const auto& robot : robots)
     {
+      auto t1 = std::chrono::high_resolution_clock::now();
       if (!loadRobotHW(robot))
       {
         return false;
       }
+      auto t2 = std::chrono::high_resolution_clock::now();
+      std::chrono::duration<double, std::milli> ms_double = t2 - t1;
+      auto ms_int = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+      std::cout << "################# " << ms_int.count() << "ms\n";
+      std::cout << "################# " << ms_double.count() << "ms\n";
     }
     return true;
   }
